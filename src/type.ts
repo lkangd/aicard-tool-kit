@@ -35,6 +35,8 @@ export type CommonPayload = {
   callbackUrl: string
   /** 事件上报自定义参数, 这参数会设置到云店服务端事件 l 字段内的 ext 字段, 目前仅支持 50320001 */
   trackCustomParams?: TTrackCustomParams
+  /** 业务组 code, 比如 5032, 用于授权相关业务下根据归属业务组做不同的精细化操作 */
+  appcode?: string
 }
 
 export type AuthPhone = CommonPayload &

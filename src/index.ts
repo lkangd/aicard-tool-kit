@@ -21,7 +21,7 @@ import type {
   PaymentParams,
   SharePayload,
   TTrackCustomParams,
-  Metadata
+  Metadata,
 } from './type'
 
 export * from './type'
@@ -348,7 +348,7 @@ export class AistoreToolKit {
   updateMetaData(metadata: Metadata) {
     this.postMessage({
       type: 'metadata',
-      payload: metadata
+      payload: metadata,
     })
   }
   //#endregion
@@ -364,7 +364,7 @@ export class AistoreToolKit {
     params: Omit<AuthUserInfo, 'type'>,
     config: RouteConfig = { redirect: false },
   ) {
-    const { callbackUrl, trackCustomParams, ...option } = params
+    const { callbackUrl, trackCustomParams, appcode, ...option } = params
 
     this.doAuth(
       {
@@ -376,6 +376,7 @@ export class AistoreToolKit {
         ],
         trackCustomParams,
         callbackUrl,
+        appcode,
       },
       config,
     )
@@ -391,7 +392,7 @@ export class AistoreToolKit {
     params: Omit<AuthPhone, 'type'>,
     config: RouteConfig = { redirect: false },
   ) {
-    const { callbackUrl, trackCustomParams, ...option } = params
+    const { callbackUrl, trackCustomParams, appcode, ...option } = params
 
     this.doAuth({
       authList: [
@@ -402,6 +403,7 @@ export class AistoreToolKit {
       ],
       trackCustomParams,
       callbackUrl,
+      appcode,
     })
   }
 
@@ -415,7 +417,7 @@ export class AistoreToolKit {
     params: Omit<AuthLocation, 'type'>,
     config: RouteConfig = { redirect: false },
   ) {
-    const { callbackUrl, trackCustomParams, ...option } = params
+    const { callbackUrl, trackCustomParams, appcode, ...option } = params
 
     this.doAuth({
       authList: [
@@ -426,6 +428,7 @@ export class AistoreToolKit {
       ],
       trackCustomParams,
       callbackUrl,
+      appcode,
     })
   }
 
@@ -439,7 +442,7 @@ export class AistoreToolKit {
     params: Omit<RequestSubscribeMessage, 'type'>,
     config: RouteConfig = { redirect: false },
   ) {
-    const { callbackUrl, trackCustomParams, ...option } = params
+    const { callbackUrl, trackCustomParams, appcode, ...option } = params
     this.doAuth({
       authList: [
         {
@@ -449,6 +452,7 @@ export class AistoreToolKit {
       ],
       trackCustomParams,
       callbackUrl,
+      appcode,
     })
   }
 
@@ -470,6 +474,7 @@ export class AistoreToolKit {
       authList: AuthItem[]
       callbackUrl: string
       trackCustomParams?: TTrackCustomParams
+      appcode?: string
     },
     config: RouteConfig = { redirect: false },
   ) {
@@ -477,13 +482,14 @@ export class AistoreToolKit {
       {
         path: '/subpackages/independent/bind_user_msg/h5_ability/index',
         params: {
-          // 转为snake_case
+          // 转为 snake_case
           auth_list: option.authList.map((it) => ({
             ...it,
             required: Boolean(it.required),
           })),
           callback_url: ensureUrlDecoded(option.callbackUrl),
           track_custom_params: option.trackCustomParams,
+          appcode: option.appcode,
         },
       },
       config,
