@@ -26,6 +26,16 @@ import type {
 
 export * from './type'
 
+const wxJSBridgeReady = new Promise((resolve) => {
+  // @ts-ignore
+  if (window && window.WeixinJSBridge) return resolve(true)
+  window.document.addEventListener(
+    'WeixinJSBridgeReady',
+    () => resolve(true),
+    false,
+  )
+})
+
 export class AistoreToolKit {
   /**
    * tc-id,h5的会话标识，应该由小程序的tc-id转化而来，请对接人链
@@ -34,7 +44,6 @@ export class AistoreToolKit {
   tcId = ''
   constructor() {
     this.handleLegacy()
-    this.setEnable().catch(console.log)
   }
   //#region 兼容处理
   /**
@@ -59,30 +68,6 @@ export class AistoreToolKit {
   }
   //#endregion
 
-  //#region 可用性
-  public enable = false
-  async setEnable() {
-    async function enableCheck() {
-      if (this.enable) {
-        return true
-      }
-      if (!window['wx']) {
-        return false
-      }
-      const { miniprogram } = await new Promise<{ miniprogram: boolean }>(
-        (resolve) => wx.miniProgram.getEnv(resolve),
-      )
-      return miniprogram
-    }
-
-    this.enable = await enableCheck.call(this)
-  }
-  async enableCheck() {
-    await this.setEnable()
-    if (!this.enable) throw new Error('请先初始化微信jssdk')
-  }
-  //#endregion
-
   //#region 基础
   /**
    * @description 将h5自身的tc-id（来自小程序的tc-id生成），给到toolkit，后续行为都将携带此id
@@ -98,7 +83,7 @@ export class AistoreToolKit {
     option: { path: string; params?: Record<string, any> },
     config: RouteConfig = {},
   ) {
-    await this.enableCheck()
+    await wxJSBridgeReady
     const mini = wx.miniProgram
     const _cfg = { ...{ redirect: false, isTab: false }, ...config }
     const fn = _cfg.isTab
@@ -119,7 +104,7 @@ export class AistoreToolKit {
     option: { path: string; params?: Record<string, any> },
     config: RouteConfig = { redirect: false },
   ) {
-    await this.enableCheck()
+    await wxJSBridgeReady
     const mini = wx.miniProgram
     const _cfg = { ...{ redirect: false, isTab: false }, ...config }
     const fn = _cfg.isTab
@@ -156,7 +141,7 @@ export class AistoreToolKit {
    * @param{Record<string, any>} data 传给小程序的数据
    */
   async postMessage(data: Record<string, any>) {
-    await this.enableCheck()
+    await wxJSBridgeReady
     wx.miniProgram.postMessage({ data })
   }
 
