@@ -472,7 +472,12 @@ export class AistoreToolKit {
             ...it,
             required: Boolean(it.required),
           })),
-          callback_url: ensureUrlDecoded(option.callbackUrl),
+          // HACK 小程序授权页面:src/subpackages/independent/bind_user_msg/h5_ability/index.tsx 中 fmtEntryParams()
+          // 依赖的 url-shim 会对整体的 url 做 decodeURIComponent 处理,
+          // 导致 callback_url 内的 search 部分被意外解析出来, 参数外泄, 所以这里特殊处理, encodeURIComponent 两次
+          callback_url: encodeURIComponent(
+            ensureUrlDecoded(option.callbackUrl),
+          ),
           track_custom_params: option.trackCustomParams,
           appcode: option.appcode,
         },
