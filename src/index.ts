@@ -127,8 +127,8 @@ export class AistoreToolKit {
     config: { old: boolean },
   ) {
     option.params = {
-      ...(option.params || {}),
       tc_id: this.tcId,
+      ...(option.params || {}),
     }
     if (config.old) {
       return `${option.path}?${toSearch(option.params || {})}`
@@ -309,6 +309,7 @@ export class AistoreToolKit {
       path,
       authConfig,
       trackCustomParams,
+      tc_id,
     } = params
     this.postMessage({
       type: 'share',
@@ -319,7 +320,8 @@ export class AistoreToolKit {
         path,
         params: _params,
         track_custom_params: trackCustomParams,
-        tc_id: this.tcId,
+        tc_id,
+        from_tc_id: this.tcId,
         auth_config:
           authConfig &&
           toUrlString({
@@ -349,7 +351,7 @@ export class AistoreToolKit {
     params: Omit<AuthUserInfo, 'type'>,
     config: RouteConfig = { redirect: false },
   ) {
-    const { callbackUrl, trackCustomParams, appcode, ...option } = params
+    const { callbackUrl, trackCustomParams, appcode, tc_id, ...option } = params
 
     this.doAuth(
       {
@@ -362,6 +364,7 @@ export class AistoreToolKit {
         trackCustomParams,
         callbackUrl,
         appcode,
+        tc_id,
       },
       config,
     )
@@ -377,7 +380,7 @@ export class AistoreToolKit {
     params: Omit<AuthPhone, 'type'>,
     config: RouteConfig = { redirect: false },
   ) {
-    const { callbackUrl, trackCustomParams, appcode, ...option } = params
+    const { callbackUrl, trackCustomParams, appcode, tc_id, ...option } = params
 
     this.doAuth({
       authList: [
@@ -389,6 +392,7 @@ export class AistoreToolKit {
       trackCustomParams,
       callbackUrl,
       appcode,
+      tc_id,
     })
   }
 
@@ -402,7 +406,7 @@ export class AistoreToolKit {
     params: Omit<AuthLocation, 'type'>,
     config: RouteConfig = { redirect: false },
   ) {
-    const { callbackUrl, trackCustomParams, appcode, ...option } = params
+    const { callbackUrl, trackCustomParams, appcode, tc_id, ...option } = params
 
     this.doAuth({
       authList: [
@@ -414,6 +418,7 @@ export class AistoreToolKit {
       trackCustomParams,
       callbackUrl,
       appcode,
+      tc_id,
     })
   }
 
@@ -427,7 +432,7 @@ export class AistoreToolKit {
     params: Omit<RequestSubscribeMessage, 'type'>,
     config: RouteConfig = { redirect: false },
   ) {
-    const { callbackUrl, trackCustomParams, appcode, ...option } = params
+    const { callbackUrl, trackCustomParams, appcode, tc_id, ...option } = params
     this.doAuth({
       authList: [
         {
@@ -438,6 +443,7 @@ export class AistoreToolKit {
       trackCustomParams,
       callbackUrl,
       appcode,
+      tc_id,
     })
   }
 
@@ -460,6 +466,7 @@ export class AistoreToolKit {
       callbackUrl: string
       trackCustomParams?: TTrackCustomParams
       appcode?: string
+      tc_id?: string
     },
     config: RouteConfig = { redirect: false },
   ) {
@@ -480,6 +487,8 @@ export class AistoreToolKit {
           ),
           track_custom_params: option.trackCustomParams,
           appcode: option.appcode,
+          from_tc_id: this.tcId,
+          tc_id: option.tc_id,
         },
       },
       config,

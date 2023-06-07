@@ -31,6 +31,8 @@ export type TTrackCustomParams = {
 }
 
 export type CommonPayload = {
+  /** 人链记录 id, 基于会话即时生成 */
+  tc_id: string
   /** 回调链接 */
   callbackUrl: string
   /** 事件上报自定义参数, 这参数会设置到云店服务端事件 l 字段内的 ext 字段, 目前仅支持 50320001 */
@@ -88,6 +90,9 @@ export type MultiAuth = CommonPayload & {
 export interface SharePayload {
   /** 落地h5链接 */
   url: string
+
+  /** 人链传播 id, 基于会话即时生成 */
+  tc_id: string
 
   /** 分享标题 */
   title?: string
